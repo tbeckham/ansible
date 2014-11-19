@@ -1,0 +1,17 @@
+---
+- hosts: YOUR_CLC
+  remote_user: root
+  tasks:
+  - name: launch ansible cloudformation example
+    environment:
+      AWS_ACCESS_KEY: YOUR_EUCA_ACCESS_KEY
+      AWS_SECRET_KEY: YOUR_EUCA_SECRET_KEY
+    cloudformation:
+      stack_name="ansible-cloudformation"
+      state=present
+      disable_rollback=true
+      template=CFN/ansible-demo.json
+    args:
+      template_parameters:
+        KeyName: YOUR_KEYPAIR
+        ImageId: EMI_TO_LAUNCH

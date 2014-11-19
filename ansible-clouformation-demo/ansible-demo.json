@@ -1,0 +1,58 @@
+{
+  "Parameters" : {
+    "KeyName" : {
+      "Type" : "String"
+    },
+    "ImageId" : {
+      "Type" : "String"
+    }
+  },
+  "Resources":{
+    "Ec2Instance":{
+      "Type":"AWS::EC2::Instance",
+      "Properties":{
+        "ImageId": { "Ref" : "ImageId" },
+        "KeyName" : { "Ref" : "KeyName" },
+        "SecurityGroups":[ { "Ref":"InstanceSecurityGroup" } ]
+      }
+    },
+    "InstanceSecurityGroup":{
+      "Type":"AWS::EC2::SecurityGroup",
+      "Properties":{
+        "GroupDescription":"Cloudformation Group",
+        "SecurityGroupIngress":[{
+                                 "IpProtocol":"tcp",
+                                 "FromPort":"22",
+                                 "ToPort":"22",
+                                 "CidrIp":"0.0.0.0/0"
+                                }]
+        }
+    },
+    "IngressRule":{
+      "Type":"AWS::EC2::SecurityGroupIngress",
+      "Properties":{
+        "GroupName":{ "Ref":"InstanceSecurityGroup" },
+        "FromPort":"80",
+        "ToPort":"80",
+        "IpProtocol":"tcp",
+        "CidrIp":"0.0.0.0/0"
+       }
+    },
+    "NewVolume" : {
+       "Type" : "AWS::EC2::Volume",
+       "Properties" : {
+         "Size" : "1",
+         "AvailabilityZone" : "YOUR_EUCA_AVAILIBILITY_ZONE",
+         "tags" : "ansible-cloudformation"
+       }
+    },
+    "MountPoint" : {
+       "Type" : "AWS::EC2::VolumeAttachment",
+       "Properties" : {
+         "InstanceId" : { "Ref" : "Ec2Instance" },
+         "VolumeId"  : { "Ref" : "NewVolume" },
+         "Device" : "/dev/sdh"
+       }
+    }
+  }
+}
